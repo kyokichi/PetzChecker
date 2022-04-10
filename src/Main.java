@@ -44,7 +44,8 @@ public class Main
                 int index = b + (outterByte * 8);
                 if( ((petPref[outterByte] & (1 << b)) != 0) && (index < adjNames.length) )
                 {
-                    result += adjNames[index] + "("+index+") ";
+                    result += adjNames[index] + " ";
+                    // result += "("+index+") "; REMOVED IN RELEASE
                 }
             }
         }
@@ -73,7 +74,7 @@ public class Main
                 String name = f.getName();
                 if(name.length() > 4 && name.substring(name.length()-4).equals(".pet"))
                 {
-                    fw.write(processFile(path+"\\",name) + "\n");
+                    fw.write(processFile(name) + "\n");
                 }
             }
         }
@@ -82,7 +83,7 @@ public class Main
     }
     
     
-    public static String processFile(String path, String inputFile) throws FileNotFoundException, IOException 
+    public static String processFile(String inputFile) throws FileNotFoundException, IOException 
     {
         //next we need to find the name of the file
         //substring to remove the last 4 characters .pet
@@ -90,7 +91,7 @@ public class Main
         
         String result = filename + "\t";;
         
-        File f = new File(path+inputFile);
+        File f = new File(inputFile);
         InputStream inputStream = new FileInputStream(f);
 
         long fileSize = f.length();
@@ -132,7 +133,7 @@ public class Main
             for(int x = 0; x < color.length && i < allBytes.length; x++)
             {
                 color[x] = allBytes[i];
-                result += String.format("0x%x ",allBytes[i]);
+                // result += String.format("0x%x ",allBytes[i]);   REMOVED IN RELEASE
                 i++;
             }
             
@@ -152,7 +153,7 @@ public class Main
             for(int x = 0; x < flavor.length && i < allBytes.length; x++)
             {
                 flavor[x] = allBytes[i];
-                result += String.format("0x%x ",allBytes[i]);
+                // result += String.format("0x%x ",allBytes[i]); REMOVED IN RELEASE
                 i++;
             }
             
