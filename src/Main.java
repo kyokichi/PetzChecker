@@ -159,10 +159,10 @@ public class Main
             
             result += "\t";
 
-            String[] allFlavors = {"chicken", "beef", "fish", "wet", "milk", "candy", "catnip", "cheese", // 7
-                                    "shiny", "chewy", "soft", "bone", "wood", "metal", "water", "rocks", // 15
-                                    "???", "hair", "???", "???", "???", "???", "???", "chemicals", // 23
-                                    "rubbish", "???", "flea", "plants", "cardboard" }; //29
+            String[] allFlavors = {"chicken", "beef", "fish", "wetfood/leftovers", "milk", "candy/sweets", "catnip", "cheese", // 7
+                                    "shiny/colorful", "chewtoy", "soft/mouse", "bone", "wood", "metal", "waterbowl", "rocks", // 15
+                                    "???", "hairball/fleaspray", "???", "???", "???", "???", "???", "chemicals", // 23
+                                    "garbage", "???", "fleabottle", "plants", "cardboard" }; //29
             
             result += bytesToNames(flavor, allFlavors);
         }
