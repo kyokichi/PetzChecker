@@ -19,6 +19,15 @@ public class Pet
     Species species;
     
     Sprite sprite;
+    Behavior behavior;
+    
+    Sprite inheritedSprite1;
+    Behavior inheritedBehavior1;
+    Looks inheritedLooks1;
+    
+    Sprite inheritedSprite2;
+    Behavior inheritedBehavior2;
+    Looks inheritedLooks2;
     
     public Pet(byte[] data, String name, boolean isPet)
     {
@@ -27,7 +36,37 @@ public class Pet
         this.isPet = isPet;
     }
     
-    public void generatePersonalityData(boolean toTable, String delim, boolean hasNotes) throws UnsupportedEncodingException
+    public void generateInheritedData(boolean allData) throws UnsupportedEncodingException
+    {
+        byte[] pfmstr = "p.f.magicpetzIII".getBytes("ASCII");
+        // find the 3rd PFM string
+        int start = Helper.findSection(petData, 0, pfmstr, 3);
+        start++; // account for the null terminator
+        
+        
+        int allele_size = 23;
+        inheritedSprite1 = new Sprite(petData, start, allData);
+        start = (start + 4) + (41 * allele_size); // 41 is the number of alleles
+        
+        inheritedBehavior1 = new Behavior(petData, start);
+        start = (start + 4) + (22 * allele_size); // 22 is the number of alleles
+        
+        allele_size = 15;
+        inheritedLooks1 = new Looks(petData, start, allData);
+        start = (start + 4) + (25 * allele_size); // 25 is the number of alleles
+        
+        allele_size = 23;
+        inheritedSprite2 = new Sprite(petData, start, allData);
+        start = (start + 4) + (41 * allele_size); // 41 is the number of alleles
+        
+        inheritedBehavior2 = new Behavior(petData, start);
+        start = (start + 4) + (22 * allele_size); // 22 is the number of alleles
+        
+        allele_size = 15;
+        inheritedLooks2 = new Looks(petData, start, allData);
+    }
+    
+    public void generatePersonalityData(boolean allData) throws UnsupportedEncodingException
     {
         int start;
         if(isPet)
@@ -50,9 +89,9 @@ public class Pet
         }
         
         
-        sprite = new Sprite(petData, start);
+        sprite = new Sprite(petData, start, allData);
+        start = (start + 4) + (41 * 23); // 41 is the number of alleles
         
-        // a lot of this should be passed in?
-        sprite.read(toTable, delim, hasNotes);
+        behavior = new Behavior(petData, start);
     }
 }

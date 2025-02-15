@@ -2,29 +2,55 @@ import java.io.*;
 
 public class Main
 {
+    public static FileWriter per;
+    public static FileWriter inherited;
+    
     public static void main(String[] args) throws IOException
     {
-        traverseFilesIn(".", "petz.csv", ",");
+        per = new FileWriter("petz-personality-data.csv");
+        //inherited = new FileWriter("petz-inherited-data.csv");
+        
+        // INHERITED DATA isn't done yet because I need to find the right spot
+        // Looks data needs to be formatted properly because when the allele range is 0, then we don't want to print it
+        
+        traverseFilesIn(".", ",");
+        
+        per.close();
+        //inherited.close();
     }
     
-    public static Pet processData(Pet pet) throws UnsupportedEncodingException, IOException
+    public static void processData(Pet pet, boolean firstRow) throws UnsupportedEncodingException, IOException
     {
+        
         // This is where I write the code that I want to happen
-        boolean toTable = true;
         String delim = ",";
-        boolean hasNotes = true;
-        pet.generatePersonalityData(toTable, delim, hasNotes);
+        boolean allData = false; // true doesn't work for the header row sadly!
+        
+        pet.generatePersonalityData(allData);
+        //pet.generateInheritedData(allData);
+        
+        if(firstRow)
+        {
+            per.write("Name" + delim + pet.sprite.generateHeaderRow(delim)
+                    + pet.behavior.generateHeaderRow(delim) + "\n");
+            
+            //inherited.write("Name" + delim + pet.sprite.generateHeaderRow(delim) 
+            //        + pet.behavior.generateHeaderRow(delim) + "\n");
+        }
+        
+        per.write(pet.name + delim + pet.sprite.generateRowOutput(delim) 
+                + pet.behavior.generateRowOutput(delim) + "\n");
+        
+        /*inherited.write(pet.name + " Gene 1" + delim + pet.inheritedSprite1.generateRowOutput(delim) 
+                + pet.inheritedBehavior1.generateRowOutput(delim) + "\n" 
+                + pet.name + " Gene 2" + delim + pet.inheritedSprite2.generateRowOutput(delim) 
+                + pet.inheritedBehavior2.generateRowOutput(delim) + "\n" );*/
         
         // all the code that modifies the pet file to be what I want for output purposes
         // the pet file should have and keep track of a bit of data that I want for output
-        
-        return pet;
     }
     
-    
-    
-    public static void traverseFilesIn(String path, String outputFilename,
-            String delim) throws IOException
+    public static void traverseFilesIn(String path, String delim) throws IOException
     {
         // for each file in the directory
         // check the extension, should be .pet for now
@@ -33,7 +59,6 @@ public class Main
         File dir = new File(path);
         File[] dirList = dir.listFiles();
         
-        FileWriter fw = new FileWriter(outputFilename);
         boolean firstRow = true;
         
         if(dirList != null)
@@ -67,18 +92,15 @@ public class Main
                 
                 Pet pet = new Pet(allBytes, name, isPet);
                 
-                pet = processData(pet);
+                processData(pet, firstRow);
                 
                 if(firstRow)
                 {
-                    fw.write("Name" + delim + pet.sprite.tableHeaders + "\n");
                     firstRow = false;
                 }
                 
-                fw.write(pet.name + delim + pet.sprite.table + "\n");
+                inputStream.close();
             }
         }
-        
-        fw.close();
     }
 }

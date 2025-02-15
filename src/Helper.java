@@ -1,3 +1,6 @@
+
+import java.util.ArrayList;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -80,5 +83,30 @@ public class Helper
         }
         
         return true;
+    }
+    
+    
+    /**
+     * Creates a string of the preferences based on the 4 bytes passed in
+     * @param petPref the 4 bytes read from a pet file
+     * @param adjNames all the possible adjectives
+     * @return a string formatted how I'd like it to appear
+     */
+    public static ArrayList<String> bytesToNames(byte[] bits, String[] adjNames)
+    {
+        ArrayList<String> result = new ArrayList<String>();
+        for(int outterByte = 0; outterByte < bits.length; outterByte++)
+        {
+            for(int b = 0; b < 8; b++)
+            {
+                int index = b + (outterByte * 8);
+                if( ((bits[outterByte] & (1 << b)) != 0) && (index < adjNames.length) )
+                {
+                    result.add(adjNames[index]);
+                }
+            }
+        }
+        
+        return result;
     }
 }

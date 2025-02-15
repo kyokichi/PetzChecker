@@ -6,13 +6,12 @@ public class Allele
     int start; // keep track of this for editing eventually
     byte[] petData; // shared by all the files
     
+    String name;
+    
     // read from the file
     int center;
-    String centerString; // will be set with byte data if the value is not known how its used
     int range;
-    boolean isInt; // if the center is read as an integer
-    ArrayList<String> dataStrings; // might be null if isInt is true
-    
+    boolean isBitmask; // if the center is read as an integer
     // I'll have to figure out if these are ever important
     int weight;
     byte weight_type;
@@ -20,10 +19,21 @@ public class Allele
     int offset;
     int rate;
     
+    String text; // will be set with byte data if the value is not known how its used
+    
+    
+    
+    public Allele(String name, int startPosition, byte[] petData)
+    {
+        this(name, startPosition, petData, true);
+    }
     
     // reads and sets all the variables
-    public Allele(int startPosition, byte[] petData)
+    public Allele(String name, int startPosition, byte[] petData, boolean hasOffset)
     {
+        // what this allele is
+        this.name = name;
+        
         start = startPosition;
         this.petData = petData;
         
@@ -53,9 +63,9 @@ public class Allele
         pos++;
         
         if(bitmask == 1)
-            isInt = false;
+            isBitmask = true;
         else
-            isInt = true;
+            isBitmask = false;
         
         
         // next 4 bytes is the weight
@@ -74,75 +84,70 @@ public class Allele
         combine_type = petData[pos];
         pos++;
 
-        
-        // next 4 bytes is Offset
-        // appears to always be 0? Uknown effect
-        offset = Helper.convertByteArrayToInt32(petData, pos);
-        pos += 4;
-        
-        // next 4 bytes is the centering rate
-        // Always 60? Unknown effect
-        rate = Helper.convertByteArrayToInt32(petData, pos);
-        pos += 4;
-        
-        
-        // if it's supposed to be an int, than the centerString is just the center
-        // other things might change this
-        if(isInt)
+        if(hasOffset)
         {
-            centerString = center + "";
-        }
-        else
-        {
-            dataStrings = new ArrayList<String>();
+            // next 4 bytes is Offset
+            // appears to always be 0? Uknown effect
+            offset = Helper.convertByteArrayToInt32(petData, pos);
+            pos += 4;
+
+            // next 4 bytes is the centering rate
+            // Always 60? Unknown effect
+            rate = Helper.convertByteArrayToInt32(petData, pos);
+            pos += 4;
         }
         
         /* String.format("CENTER: 0x%x 0x%x 0x%x 0x%x -- as int: %d",
             petData[pos], petData[pos+1], petData[pos+2], petData[pos+3], center); */
     }
     
+    public void setTextFromAdjectives(String[] adjNames)
+    {
+        if(isBitmask)
+        {
+            text = "";
+            byte[] array = {petData[start],petData[start+1], petData[start+2],petData[start+3]};
+            ArrayList<String> textData = Helper.bytesToNames(array, adjNames);
+            
+            for(String s : textData)
+            {
+                text += "["+s+"] ";
+            }
+        }
+    }
+    
     
     // two types of output:
     // either center and range are both posted
     // or the bitmask makes some sort of different kind of output usually a single string or list
-    public String tableString(String delim)
+    public String output(String delim)
     {
-        if(isInt) // just take the center and range
-        {
-            return centerString + delim + range + delim;
-        }
-        else
-        {
-            return getBitData() + delim;
-        }
+        return output(false, delim);
     }
     
-    public String tableAllData(String delim)
-    {
-        String row = "";
-        
-        if(dataStrings == null) // just take the center and range
-        {
-            row += centerString + delim + range + delim;
-        }
-        else // if(dataStrings != null)
-        {
-            row += getBitData() + delim + range + delim;
-        }
-        
-        row += weight + delim + weight_type + delim + combine_type + delim
-                + offset + delim + rate + delim;
-        
-        return row;
-    }
     
-    public String getBitData()
+    public String output(boolean allData, String delim)
     {
-        String result = "";
-        for(String s : dataStrings)
+        String piece = center + delim;
+        
+        if(text != null)
         {
-            result += "["+s+"] ";
+            piece = text + delim;
         }
-        return result;
+        
+        if(!isBitmask || allData)
+        {
+            piece += range + delim;
+        }
+        
+        if(allData)
+        {
+            piece += delim + range + delim;
+
+            piece += weight + delim + weight_type + delim + combine_type + delim
+                    + offset + delim + rate + delim;
+        }
+        
+        return piece;
     }
 }
