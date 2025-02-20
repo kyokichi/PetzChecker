@@ -51,7 +51,7 @@ public class Helper
         }
         else
         {
-           System.out.println("Error: Did not find section");
+           System.out.println("Error: Did not find section: " + getStringFromLength(0, searched, searched.length));
            
            return -1;
         }
@@ -108,5 +108,18 @@ public class Helper
         }
         
         return result;
+    }
+    
+    
+    public static String getStringFromLength(int start, byte[] data, int length)
+    {
+        byte[] nameB = new byte[length];
+                    
+        for(int i = 0; i < length; i++)
+        {
+            nameB[i] = data[i + start];
+        }
+        
+        return new String(nameB);
     }
 }

@@ -154,4 +154,26 @@ public class Sprite
         
         return row;
     }
+    
+    
+    public String getColor()
+    {
+        return data[color].text;
+    }
+    
+    public String getFlavor()
+    {
+        return data[flavor].text;
+    }
+    
+    public String getSignatureMoves()
+    {
+        return data[signatureMoves].text;
+    }
+    
+    public String getFoodFinickiness()
+    {
+        return data[foodFinickiness].text;
+    }
+    
 }

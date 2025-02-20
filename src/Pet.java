@@ -14,12 +14,18 @@ public class Pet
     byte[] petData;
     String name;
     boolean isPet;
+    String owner;
+    String profile;
     
     Version ver;
     Species species;
     
     Sprite sprite;
     Behavior behavior;
+    
+    LNZ lnz;
+    
+    AncestryInfo ancestry;
     
     Sprite inheritedSprite1;
     Behavior inheritedBehavior1;
@@ -34,6 +40,55 @@ public class Pet
         petData = data;
         this.name = name;
         this.isPet = isPet;
+    }
+    
+    public void generateLNZ() throws UnsupportedEncodingException
+    {
+        byte[] pfmstrLNZ = "p.f.magicpetzIII".getBytes("ASCII");
+        
+        // find the second PFM string for the LNZ section
+        int pos = Helper.findSection(petData, 0, pfmstrLNZ, 2);
+
+        lnz = new LNZ(petData, pos);
+        
+        if(lnz.pos == -1) System.out.println(name);
+    }
+    
+    public void generateAncestryInfo() throws UnsupportedEncodingException
+    {
+        byte[] pfmstr = "PfMaGiCpEtZIII".getBytes("ASCII");
+        
+        int pos = Helper.findSection(petData, 0, pfmstr, 1);
+        pos++;
+        
+        // Unknown Int-32
+        int unknown = Helper.convertByteArrayToInt32(petData, pos);
+        pos += 4;
+        
+        ancestry = new AncestryInfo(petData, pos);
+        
+        
+        
+        // the profile stuff
+        pos = ancestry.pos;
+                    
+        // owner name AFTER ancestry data
+        int length = Helper.convertByteArrayToInt32(petData, pos);
+        pos += 4;
+        owner = Helper.getStringFromLength(pos, petData, length);
+        pos += length;
+        //wr.printf("%s%s", owner, delim);
+        //System.out.println(owner.equals(root.owner));
+
+
+        // profile
+        length = Helper.convertByteArrayToInt32(petData, pos);
+        pos += 4;
+        profile = Helper.getStringFromLength(pos, petData, length);
+        pos += length;
+        profile = profile.replaceAll(System.lineSeparator(), " // ");
+        //profile = profile.replaceAll("%", "%%");
+        //profile = profile.replaceAll("\"", "");
     }
     
     public void generateInheritedData(boolean allData) throws UnsupportedEncodingException

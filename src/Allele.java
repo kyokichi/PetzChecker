@@ -109,9 +109,14 @@ public class Allele
             byte[] array = {petData[start],petData[start+1], petData[start+2],petData[start+3]};
             ArrayList<String> textData = Helper.bytesToNames(array, adjNames);
             
-            for(String s : textData)
+            for(int i = 0; i < textData.size(); i++)
             {
-                text += "["+s+"] ";
+                if(i > 0)
+                {
+                    text += ", ";
+                }
+                
+                text += textData.get(i);
             }
         }
     }
