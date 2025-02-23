@@ -23,13 +23,13 @@ public class Looks
                             "Body",
                             "Coat",
                             "Tongue",
-                            "Eye Color",
-                            "Lid Color",
-                            "Fur Color 1",
+                            "Eye Color", //12
+                            "Lid Color", //13
+                            "Fur Color 1", //14
                             "Fur Color 2",
                             "Fur Color 3",
                             "Fur Color 4",
-                            "Fur Color 5",
+                            "Fur Color 5", //18
                             "Marking Factor",
                             "Spot Factor",
                             "Marking 1",
@@ -53,7 +53,7 @@ public class Looks
         this.allData = allData;
     
         int n = Helper.convertByteArrayToInt32(petData, start);
-        
+        System.out.println("Looks: " + n);
         
         if(n != 25) // check to see if N is not equal to then I should abort mission
         {
@@ -70,7 +70,7 @@ public class Looks
             
             if(headers[col].charAt(0) != '-') // if there's no hyphen, we don't skip it
             {
-                data[col] = new Allele(headers[col], pos, petData);
+                data[col] = new Allele(headers[col], pos, petData, false);
                 
                 data[col].text = data[col].center + ""; // default unless otherwise stated below
                 
@@ -88,15 +88,15 @@ public class Looks
                 else // center is a wildcard of things
                 {
                     // use the column variable refer to the variable headers
-                    if(col == 11) // eye color
+                    if(col == 12) // eye color
                     {
                         data[col].text = eyecolors[data[col].center];
                     }
-                    else if(col == 12) // eyelid color
+                    else if(col == 13) // eyelid color
                     {
                         data[col].text = eyelidColors[data[col].center];
                     }
-                    else if(13 <= col && col <= 17) // coat colors
+                    else if(14 <= col && col <= 18) // coat colors
                     {
                         data[col].text = coatColors[data[col].center];
                     }
@@ -105,7 +105,7 @@ public class Looks
             }
             else if(allData)
             {
-                data[col] = new Allele(headers[col].substring(1), pos, petData);
+                data[col] = new Allele(headers[col].substring(1), pos, petData, false);
             }
             // else its just null
         }

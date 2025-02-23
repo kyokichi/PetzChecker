@@ -292,6 +292,9 @@ public class AncestryInfo
             pos += 4;
 
 
+            // both of these variables are stored in the lowest 2 bits of this byte
+            // the lowest bit: 0 = mixed breed, 1 = purebred
+            // the second lowest bit: 0 = male, 1 = female
             boolean isPurebred = (petData[pos] & (byte)1) > 0;
             boolean isFemale = (petData[pos] & ((byte)1 << 1)) > 0;
 

@@ -17,6 +17,8 @@ public class Pet
     String owner;
     String profile;
     
+    VeterinaryHistory vetHis;
+    
     Version ver;
     Species species;
     
@@ -86,39 +88,50 @@ public class Pet
         pos += 4;
         profile = Helper.getStringFromLength(pos, petData, length);
         pos += length;
-        profile = profile.replaceAll(System.lineSeparator(), " // ");
+        profile = profile.replaceAll(System.lineSeparator(), " // "); // need to remove all new lines
         //profile = profile.replaceAll("%", "%%");
-        //profile = profile.replaceAll("\"", "");
+        profile = profile.replaceAll("\"", ""); // need to remove all quotes
+    }
+    
+    public int generateVeterinaryHistory() throws UnsupportedEncodingException
+    {
+        byte[] pfmstr = "p.f.magicpetzIII".getBytes("ASCII");
+        // find the 3rd PFM string
+        int pos = Helper.findSection(petData, 0, pfmstr, 3);
+        pos++; // account for the null terminator
+        
+        vetHis = new VeterinaryHistory(petData, pos);
+        
+        return vetHis.endOfSection;
     }
     
     public void generateInheritedData(boolean allData) throws UnsupportedEncodingException
     {
-        byte[] pfmstr = "p.f.magicpetzIII".getBytes("ASCII");
-        // find the 3rd PFM string
-        int start = Helper.findSection(petData, 0, pfmstr, 3);
-        start++; // account for the null terminator
+        int pos = generateVeterinaryHistory();
+        
+        int allele_size = 15;
+        inheritedSprite1 = new Sprite(petData, pos, allData, false);
+        pos = (pos + 4) + (41 * allele_size); // 41 is the number of alleles
+        
+        /*System.out.println("Color: "+inheritedSprite1.getColor());
+        System.out.println("Flavor: "+inheritedSprite1.getFlavor());
+        System.out.println("FoodFin: "+inheritedSprite1.getFoodFinickiness());
+        System.out.println("Sigmove: "+inheritedSprite1.getSignatureMoves());*/
+        
+        inheritedBehavior1 = new Behavior(petData, pos, false);
+        pos = (pos + 4) + (22 * allele_size); // 22 is the number of alleles
         
         
-        int allele_size = 23;
-        inheritedSprite1 = new Sprite(petData, start, allData);
-        start = (start + 4) + (41 * allele_size); // 41 is the number of alleles
+        inheritedLooks1 = new Looks(petData, pos, allData);
+        pos = (pos + 4) + (25 * allele_size); // 25 is the number of alleles
         
-        inheritedBehavior1 = new Behavior(petData, start);
-        start = (start + 4) + (22 * allele_size); // 22 is the number of alleles
+        inheritedSprite2 = new Sprite(petData, pos, allData, false);
+        pos = (pos + 4) + (41 * allele_size); // 41 is the number of alleles
         
-        allele_size = 15;
-        inheritedLooks1 = new Looks(petData, start, allData);
-        start = (start + 4) + (25 * allele_size); // 25 is the number of alleles
+        inheritedBehavior2 = new Behavior(petData, pos, false);
+        pos = (pos + 4) + (22 * allele_size); // 22 is the number of alleles
         
-        allele_size = 23;
-        inheritedSprite2 = new Sprite(petData, start, allData);
-        start = (start + 4) + (41 * allele_size); // 41 is the number of alleles
-        
-        inheritedBehavior2 = new Behavior(petData, start);
-        start = (start + 4) + (22 * allele_size); // 22 is the number of alleles
-        
-        allele_size = 15;
-        inheritedLooks2 = new Looks(petData, start, allData);
+        inheritedLooks2 = new Looks(petData, pos, allData);
     }
     
     public void generatePersonalityData(boolean allData) throws UnsupportedEncodingException

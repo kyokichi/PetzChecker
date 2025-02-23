@@ -5,6 +5,7 @@ public class Allele
 {
     int start; // keep track of this for editing eventually
     byte[] petData; // shared by all the files
+    int size; // how many bytes this allele is
     
     String name;
     
@@ -33,6 +34,8 @@ public class Allele
     {
         // what this allele is
         this.name = name;
+        
+        size = 23;
         
         start = startPosition;
         this.petData = petData;
@@ -86,6 +89,8 @@ public class Allele
 
         if(hasOffset)
         {
+            size = 15;
+            
             // next 4 bytes is Offset
             // appears to always be 0? Uknown effect
             offset = Helper.convertByteArrayToInt32(petData, pos);
@@ -113,7 +118,7 @@ public class Allele
             {
                 if(i > 0)
                 {
-                    text += ", ";
+                    text += "; ";
                 }
                 
                 text += textData.get(i);

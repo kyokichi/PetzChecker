@@ -9,6 +9,64 @@ public class Main
     
     public static void main(String[] args) throws IOException
     {
+        //mainData();
+        mainTest();
+    }
+    
+    
+    
+    public static void mainTest() throws IOException
+    {
+        per = new FileWriter("petz-personality-data.csv");
+        inherited = new FileWriter("petz-inherited-data.csv");
+        
+        // INHERITED DATA isn't done yet because I need to find the right spot
+        // Looks data needs to be formatted properly because when the allele range is 0, then we don't want to print it
+        
+        traverseFilesIn(".", ",");
+        
+        per.close();
+        inherited.close();
+    }
+    
+    public static void processData(Pet pet, boolean firstRow) throws UnsupportedEncodingException, IOException
+    {
+        
+        // This is where I write the code that I want to happen
+        String delim = ",";
+        boolean allData = false; // true doesn't work for the header row sadly!
+        
+        pet.generatePersonalityData(allData);
+        pet.generateInheritedData(allData);
+        
+        if(firstRow)
+        {
+            per.write("Name" + delim + pet.sprite.generateHeaderRow(delim)
+                    + pet.behavior.generateHeaderRow(delim) + "\n");
+            
+            inherited.write("Name" + delim + pet.sprite.generateHeaderRow(delim) 
+                    + pet.behavior.generateHeaderRow(delim) 
+                    + pet.inheritedLooks1.generateHeaderRow(delim) + "\n");
+        }
+        
+        per.write(pet.name + delim + pet.sprite.generateRowOutput(delim) 
+                + pet.behavior.generateRowOutput(delim) + "\n");
+        
+        inherited.write(pet.name + " Gene 1" + delim + pet.inheritedSprite1.generateRowOutput(delim) 
+                + pet.inheritedBehavior1.generateRowOutput(delim) 
+                + pet.inheritedLooks1.generateRowOutput(delim) + "\n" 
+                + pet.name + " Gene 2" + delim + pet.inheritedSprite2.generateRowOutput(delim) 
+                + pet.inheritedBehavior2.generateRowOutput(delim) 
+                + pet.inheritedLooks2.generateRowOutput(delim) + "\n" );
+        
+        // all the code that modifies the pet file to be what I want for output purposes
+        // the pet file should have and keep track of a bit of data that I want for output
+    }
+    
+    
+    // Data people care about
+    public static void mainData() throws IOException
+    {
         out = new FileWriter("petz.csv");
         
         traverseFilesIn(".", ",");
@@ -16,7 +74,7 @@ public class Main
         out.close();
     }
     
-    public static void processData(Pet pet, boolean firstRow) throws UnsupportedEncodingException, IOException
+    public static void processDataMain(Pet pet, boolean firstRow) throws UnsupportedEncodingException, IOException
     {
         // This is where I write the code that I want to happen
         String delim = ",";
@@ -100,52 +158,5 @@ public class Main
                 inputStream.close();
             }
         }
-    }
-    
-    
-    
-    public static void mainOld(String[] args) throws IOException
-    {
-        per = new FileWriter("petz-personality-data.csv");
-        //inherited = new FileWriter("petz-inherited-data.csv");
-        
-        // INHERITED DATA isn't done yet because I need to find the right spot
-        // Looks data needs to be formatted properly because when the allele range is 0, then we don't want to print it
-        
-        traverseFilesIn(".", ",");
-        
-        per.close();
-        //inherited.close();
-    }
-    
-    public static void processDataOld(Pet pet, boolean firstRow) throws UnsupportedEncodingException, IOException
-    {
-        
-        // This is where I write the code that I want to happen
-        String delim = ",";
-        boolean allData = false; // true doesn't work for the header row sadly!
-        
-        pet.generatePersonalityData(allData);
-        //pet.generateInheritedData(allData);
-        
-        if(firstRow)
-        {
-            per.write("Name" + delim + pet.sprite.generateHeaderRow(delim)
-                    + pet.behavior.generateHeaderRow(delim) + "\n");
-            
-            //inherited.write("Name" + delim + pet.sprite.generateHeaderRow(delim) 
-            //        + pet.behavior.generateHeaderRow(delim) + "\n");
-        }
-        
-        per.write(pet.name + delim + pet.sprite.generateRowOutput(delim) 
-                + pet.behavior.generateRowOutput(delim) + "\n");
-        
-        /*inherited.write(pet.name + " Gene 1" + delim + pet.inheritedSprite1.generateRowOutput(delim) 
-                + pet.inheritedBehavior1.generateRowOutput(delim) + "\n" 
-                + pet.name + " Gene 2" + delim + pet.inheritedSprite2.generateRowOutput(delim) 
-                + pet.inheritedBehavior2.generateRowOutput(delim) + "\n" );*/
-        
-        // all the code that modifies the pet file to be what I want for output purposes
-        // the pet file should have and keep track of a bit of data that I want for output
     }
 }

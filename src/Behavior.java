@@ -22,26 +22,39 @@ public class Behavior
     private int start;
     
     Allele[] data;
+    int alleleSize;
     
     public Behavior(byte[] petData, int start)
     {
+        this(petData, start, true);
+    }
+    
+    public Behavior(byte[] petData, int start, boolean hasOffset)
+    {
+        int allele_size = 23;
+        if(!hasOffset)
+            allele_size = 15;
+        
         this.petData = petData;
         this.start = start;
     
         int n = Helper.convertByteArrayToInt32(petData, start);
+        System.out.println("Behavior: " + n);
         
         if(n != 22) // check to see if N is not equal to then I should abort mission
         {
             System.out.println("Problem in behavior: " + n);
+            return;
         }
         
         data = new Allele[n];
         
         for(int col = 0; col < n; col++)
         {
-            int pos = (start + 4) + (col * 23);
+            int pos = (start + 4) + (col * allele_size);
             
-            data[col] = new Allele(headers[col], pos, petData);
+            data[col] = new Allele(headers[col], pos, petData, hasOffset);
+            alleleSize = data[col].size;
         }
     }
     

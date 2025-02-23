@@ -17,10 +17,10 @@ public class Sprite
     private final String[] allColors = {"white", "black", "red", "green", "yellow", "blue", "purple", "pink", // 7
                                   "orange", "brown", "gray", "clear" }; // 11
     
-    private final String[] allFlavors = {"chicken", "beef", "fish", "wetfood/leftovers", "milk", "candy/sweets", "catnip", "cheese", // 7
-                                    "shiny/colorful", "chewtoy", "soft/mouse", "bone", "wood", "metal", "waterbowl", "rocks", // 15
-                                    "???", "hairball/fleaspray", "???", "???", "???", "???", "???", "chemicals", // 23
-                                    "garbage", "???", "fleabottle", "plants", "cardboard" }; //28
+    private final String[] allFlavors = {"chicken", "beef", "fish", "turkey", "milk", "sweet", "catnip", "cheese", // 7
+                                    "plastic", "rubber", "soft", "bone", "wood", "metal", "water", "rock", // 15
+                                    "unknown1", "hairball/fleaspray", "unknown2", "unknown3", "unknown4", "unknonw5", "unknown6", "chemicals", // 23
+                                    "garbage", "unknown7", "fleabottle", "plants", "healthy" }; //28
     
     private final String[] animations = {"01", "02", "03", "04", "05", "06", "07", "08",
                                     "09", "10", "11", "12", "13", "14", "15", "16",
@@ -42,16 +42,25 @@ public class Sprite
     
     boolean allData;
     Allele[] data;
-    
+    int alleleSize;
     
     public Sprite(byte[] petData, int start, boolean allData)
     {
+        this(petData, start, allData, true);
+    }
+    
+    public Sprite(byte[] petData, int start, boolean allData, boolean hasOffset)
+    {
+        int allele_size = 23;
+        if(!hasOffset)
+            allele_size = 15;
+        
         this.petData = petData;
         this.start = start;
         this.allData = allData;
     
         int n = Helper.convertByteArrayToInt32(petData, start);
-        
+        System.out.println("Sprite: " + n);
         
         
         if(n != 41) // check to see if N is not equal to then I should abort mission
@@ -63,11 +72,12 @@ public class Sprite
         
         for(int col = 0; col < n; col++)
         {
-            int pos = (start + 4) + (col * 23);
+            int pos = (start + 4) + (col * allele_size);
             
             if(headers[col].charAt(0) != '-') // if there's no hyphen, we don't skip it
             {
-                data[col] = new Allele(headers[col], pos, petData);
+                data[col] = new Allele(headers[col], pos, petData, hasOffset);
+                alleleSize = data[col].size;
                 
                 data[col].text = data[col].center + ""; // default unless otherwise stated below
                 
@@ -110,7 +120,8 @@ public class Sprite
             }
             else if(allData)
             {
-                data[col] = new Allele(headers[col].substring(1), pos, petData);
+                data[col] = new Allele(headers[col].substring(1), pos, petData, hasOffset);
+                alleleSize = data[col].size;
             }
             // else its just null
         }
