@@ -51,6 +51,7 @@ public class Main
             out.write("Name" + delim + "Gender" + delim
                     + "Favorite Color" + delim + "Favorite Flavor" 
                     + delim + "Food Finickiness" + delim + "Signature Moves" + delim
+                    + "External Texture List" + delim + "Palette" + delim
                     + "Breed Face" + delim
                     + pet.ancestry.generateHeaderRow(delim)
                     + "Profile Comment" + delim
@@ -66,6 +67,7 @@ public class Main
                 + "\"" + pet.sprite.getFlavor() + "\"" + delim
                 + "\"" + pet.sprite.getFoodFinickiness() + "\"" + delim 
                 + "\"" + pet.sprite.getSignatureMoves() + "\"" + delim
+                + pet.lnz.getTextures() + delim + pet.lnz.getPalette() + delim
                 + pet.lnz.face + delim
                 + pet.ancestry.generateRowOutput(delim)
                 + "\"" + pet.profile + "\"" + delim 
