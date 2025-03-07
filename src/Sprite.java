@@ -60,7 +60,7 @@ public class Sprite
         this.allData = allData;
     
         int n = Helper.convertByteArrayToInt32(petData, start);
-        System.out.println("Sprite: " + n);
+        //System.out.println("Sprite: " + n);
         
         
         if(n != 41) // check to see if N is not equal to then I should abort mission

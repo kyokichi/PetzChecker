@@ -53,7 +53,7 @@ public class Looks
         this.allData = allData;
     
         int n = Helper.convertByteArrayToInt32(petData, start);
-        System.out.println("Looks: " + n);
+        //System.out.println("Looks: " + n);
         
         if(n != 25) // check to see if N is not equal to then I should abort mission
         {

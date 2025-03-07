@@ -122,4 +122,16 @@ public class Helper
         
         return new String(nameB);
     }
+    
+    public static boolean containsArray(String[] arr, String searched)
+    {
+        for(String s : arr)
+        {
+            if(s.equalsIgnoreCase(searched))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

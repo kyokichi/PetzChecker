@@ -36,9 +36,9 @@ public class VeterinaryHistory
         pos++;
         
         if(petData[pos] == 0)
-            dependant = "Independent";
+            dependant = "None";
         else if(petData[pos] == 1)
-            dependant = "Dependent";
+            dependant = "Has Dependant Child";
         else
             dependant = "Unknown";
         pos++;

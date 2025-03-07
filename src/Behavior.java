@@ -39,7 +39,7 @@ public class Behavior
         this.start = start;
     
         int n = Helper.convertByteArrayToInt32(petData, start);
-        System.out.println("Behavior: " + n);
+        //System.out.println("Behavior: " + n);
         
         if(n != 22) // check to see if N is not equal to then I should abort mission
         {
