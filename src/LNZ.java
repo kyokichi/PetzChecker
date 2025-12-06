@@ -142,7 +142,7 @@ public class LNZ
             return "None";
         }
         
-        return usesPalette;
+        return usesPalette.replaceAll("\n", "");
     }
     
     public String getTextures()

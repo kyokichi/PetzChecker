@@ -1,4 +1,12 @@
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main
 {
@@ -6,6 +14,8 @@ public class Main
     public static FileWriter inherited;
     
     public static FileWriter out;
+
+    static boolean applyHeader = true;
     
     public static void main(String[] args) throws IOException
     {
@@ -18,11 +28,27 @@ public class Main
         
         // this is what people care about
         out = new FileWriter("petz.csv");
-        
-        
-        traverseFilesIn(".", ",");
-        
-        
+
+        String recursiveArg = "-r";
+        if (args.length > 0 && recursiveArg.equalsIgnoreCase(args[0])) {
+            try {
+                List<Path> folders = buildFolderList();
+                System.out.println("Recursively searching all subfolders for .pet files. Be patient, this might take a minute.");
+                for (Path path : folders) {
+                    System.out.println("Reading folder: " + path.toString());
+                    traverseFilesIn(path.toString(),true);
+
+                }
+                System.out.println("Done!");
+            }
+            catch (IOException e) {
+                System.err.println("Error building folder list: " + e.getMessage());
+            }
+        }
+        else {
+            traverseFilesIn(".",  false);
+        }
+
         out.close();
         //inherited.close();
         
@@ -30,9 +56,16 @@ public class Main
         // the pet file should have and keep track of a bit of data that I want for output
         // MAYBE I should just make another file for handling writing to a pet file when I need it
     }
+
+    public static List<Path> buildFolderList() throws IOException {
+        Path startPath = Paths.get(".");
+        try (Stream<Path> paths = Files.walk(startPath)) {
+            return paths.filter(Files::isDirectory).collect(Collectors.toList());
+        }
+    }
     
     
-    public static void processData(Pet pet, boolean firstRow) throws UnsupportedEncodingException, IOException
+    public static void processData(Pet pet, String filePath) throws UnsupportedEncodingException, IOException
     {
         // This is where I write the code that I want to happen
         String delim = ",";
@@ -43,37 +76,47 @@ public class Main
         pet.generateLNZ();
         //pet.generateInheritedData(allData);
         pet.generateVeterinaryHistory();
+
         
-        
-        
-        if(firstRow)
+        if(applyHeader)
         {
-            out.write("Name" + delim + "Gender" + delim
-                    + "Favorite Color" + delim + "Favorite Flavor" 
+            String header = "Name" + delim + "Gender" + delim
+                    + "Favorite Color" + delim + "Favorite Flavor"
                     + delim + "Food Finickiness" + delim + "Signature Moves" + delim
                     + "External Texture List" + delim + "Palette" + delim
                     + "Breed Face" + delim
                     + pet.ancestry.generateHeaderRow(delim)
                     + "Profile Comment" + delim
-                    + pet.behavior.generateHeaderRow(delim) 
-                    + "Is Neutered?" + delim + "With Child?" + delim + "Is Pregnant?"
-                    + "\n");
+                    + pet.behavior.generateHeaderRow(delim)
+                    + "Is Neutered?" + delim + "With Child?" + delim + "Is Pregnant?";
+            if (filePath != null && !filePath.isEmpty()) {
+                header += delim + "File Path";
+            }
+            header += "\n";
+            out.write(header);
+            applyHeader = false;
         }
+
         
         //System.out.println(pet.name);
-        
-        out.write(pet.name + delim + pet.vetHis.gender + delim
-                + "\"" + pet.sprite.getColor() + "\"" + delim 
+
+        String petInfo = pet.name + delim + pet.vetHis.gender + delim
+                + "\"" + pet.sprite.getColor() + "\"" + delim
                 + "\"" + pet.sprite.getFlavor() + "\"" + delim
-                + "\"" + pet.sprite.getFoodFinickiness() + "\"" + delim 
+                + "\"" + pet.sprite.getFoodFinickiness() + "\"" + delim
                 + "\"" + pet.sprite.getSignatureMoves() + "\"" + delim
                 + pet.lnz.getTextures() + delim + pet.lnz.getPalette() + delim
                 + pet.lnz.face + delim
                 + pet.ancestry.generateRowOutput(delim)
-                + "\"" + pet.profile + "\"" + delim 
-                + pet.behavior.generateRowOutput(delim) 
-                + pet.vetHis.neutered + delim + pet.vetHis.dependant + delim + pet.vetHis.pregnant
-                + "\n");
+                + "\"" + pet.profile + "\"" + delim
+                + pet.behavior.generateRowOutput(delim)
+                + pet.vetHis.neutered + delim + pet.vetHis.dependant + delim + pet.vetHis.pregnant;
+        if (filePath != null && !filePath.isEmpty()) {
+            petInfo += delim + filePath;
+        }
+        petInfo += "\n";
+        
+        out.write(petInfo);
         
         
         
@@ -101,7 +144,7 @@ public class Main
         */
     }
     
-    public static void traverseFilesIn(String path, String delim) throws IOException
+    public static void traverseFilesIn(String path, boolean savePath) throws IOException
     {
         // for each file in the directory
         // check the extension, should be .pet for now
@@ -109,9 +152,7 @@ public class Main
         
         File dir = new File(path);
         File[] dirList = dir.listFiles();
-        
-        boolean firstRow = true;
-        
+
         if(dirList != null)
         {
             for(File f : dirList)
@@ -142,14 +183,11 @@ public class Main
                 inputStream.read(allBytes);
                 
                 Pet pet = new Pet(allBytes, name, isPet);
-                
-                processData(pet, firstRow);
-                
-                if(firstRow)
-                {
-                    firstRow = false;
-                }
-                
+
+                String pathStr = path;
+                if (!savePath) pathStr = "";
+                processData(pet, pathStr);
+
                 inputStream.close();
             }
         }
