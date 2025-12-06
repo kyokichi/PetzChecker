@@ -147,6 +147,7 @@ public class LNZ
     
     public String getTextures()
     {
+        if (textures == null) return "None";
         int n = textures.size();
         
         if(n == 0)
