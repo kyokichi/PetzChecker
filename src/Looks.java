@@ -1,3 +1,6 @@
+
+import java.util.HashSet;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -46,6 +49,10 @@ public class Looks
     boolean allData;
     Allele[] data;
     
+    boolean hasP5;
+    boolean hasOther;
+    
+    
     public Looks(byte[] petData, int start, boolean allData)
     {
         this.petData = petData;
@@ -78,11 +85,21 @@ public class Looks
                 // time to set some proper data
                 if(data[col].range != 0) // then the center is a breed id
                 {
-                    int index = data[col].center - 100; // use this in the breed array
+                    int index = data[col].center - 1000; // use this in the breed array
                     
                     if(0 <= index && index < breedIds.length) // check if the index is in the correct bounds
                     {
                         data[col].text = breedIds[index];
+                    }
+                    
+                    // KEEP TRACK OF THE BREEDS IS JUST EASIER HERE
+                    if(index >= 21 && index <= 32)
+                    {
+                        hasP5 = true;
+                    }
+                    else if(index > 32 || index == 24 || index == 21 || index == 20)
+                    {
+                        hasOther = true;
                     }
                 }
                 else // center is a wildcard of things
@@ -170,12 +187,12 @@ public class Looks
             "Poodle",
             "Sheepdog",
             "Dachshund",
-            "Labrador",
+            "Labrador", //19
             "Pig",
             "Bunny",
-            "Japanese Bobtail",
+            "Japanese Bobtail", //22
             "Scottish Fold",
-            "Unknown",
+            "Unknown", //24
             "Jack Russell",
             "Golden Retriever",
             "Papillon",

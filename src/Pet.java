@@ -162,4 +162,23 @@ public class Pet
         
         behavior = new Behavior(petData, start);
     }
+    
+    public String requiresExternalBreeds()
+    {
+        if(inheritedLooks1 != null)
+        {
+            if(inheritedLooks1.hasP5 || inheritedLooks2.hasP5)
+            {
+                return "Has P5 Breeds";
+            }
+
+            if(inheritedLooks1.hasOther || inheritedLooks2.hasOther)
+            {
+                return "Has Other Breeds";
+            }
+        }
+        
+        return "No";
+        
+    }
 }

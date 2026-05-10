@@ -9,12 +9,12 @@ public class Main
     
     public static void main(String[] args) throws IOException
     {
-        //per = new FileWriter("petz-personality-data.csv");
+        per = new FileWriter("petz-personality-data.csv");
         
         // this is the inherited data (WHICH I STILL GOTTA FIX
         // INHERITED DATA isn't done yet because I need to find the right spot
         // Looks data needs to be formatted properly because when the allele range is 0, then we don't want to print it
-        //inherited = new FileWriter("petz-inherited-data.csv");
+        inherited = new FileWriter("petz-inherited-data.csv");
         
         // this is what people care about
         out = new FileWriter("petz.csv");
@@ -24,7 +24,8 @@ public class Main
         
         
         out.close();
-        //inherited.close();
+        inherited.close();
+        per.close();
         
         // all the code that modifies the pet file to be what I want for output purposes
         // the pet file should have and keep track of a bit of data that I want for output
@@ -41,7 +42,13 @@ public class Main
         pet.generatePersonalityData(allData);
         pet.generateAncestryInfo();
         pet.generateLNZ();
-        //pet.generateInheritedData(allData);
+        
+        String breed = pet.ancestry.root.breed;
+        if(!breed.equals("Pig") && !breed.equals("Bunny"))
+        {
+            pet.generateInheritedData(allData);
+        }
+        
         pet.generateVeterinaryHistory();
         
         
@@ -52,7 +59,7 @@ public class Main
                     + "Favorite Color" + delim + "Favorite Flavor" 
                     + delim + "Food Finickiness" + delim + "Signature Moves" + delim
                     + "External Texture List" + delim + "Palette" + delim
-                    + "Breed Face" + delim
+                    + "Has External Breeds" + delim + "Breed Face" + delim
                     + pet.ancestry.generateHeaderRow(delim)
                     + "Profile Comment" + delim
                     + pet.behavior.generateHeaderRow(delim) 
@@ -60,7 +67,7 @@ public class Main
                     + "\n");
         }
         
-        //System.out.println(pet.name);
+        System.out.println(pet.name);
         
         out.write(pet.name + delim + pet.vetHis.gender + delim
                 + "\"" + pet.sprite.getColor() + "\"" + delim 
@@ -68,7 +75,7 @@ public class Main
                 + "\"" + pet.sprite.getFoodFinickiness() + "\"" + delim 
                 + "\"" + pet.sprite.getSignatureMoves() + "\"" + delim
                 + pet.lnz.getTextures() + delim + pet.lnz.getPalette() + delim
-                + pet.lnz.face + delim
+                + pet.requiresExternalBreeds() + delim + pet.lnz.face + delim
                 + pet.ancestry.generateRowOutput(delim)
                 + "\"" + pet.profile + "\"" + delim 
                 + pet.behavior.generateRowOutput(delim) 
@@ -78,7 +85,7 @@ public class Main
         
         
         // Other ideas for later reading of data
-        /*
+        
         if(firstRow)
         {
             per.write("Name" + delim + pet.sprite.generateHeaderRow(delim)
@@ -92,13 +99,16 @@ public class Main
         per.write(pet.name + delim + pet.sprite.generateRowOutput(delim) 
                 + pet.behavior.generateRowOutput(delim) + "\n");
         
-        inherited.write(pet.name + " Gene 1" + delim + pet.inheritedSprite1.generateRowOutput(delim) 
-                + pet.inheritedBehavior1.generateRowOutput(delim) 
-                + pet.inheritedLooks1.generateRowOutput(delim) + "\n" 
-                + pet.name + " Gene 2" + delim + pet.inheritedSprite2.generateRowOutput(delim) 
-                + pet.inheritedBehavior2.generateRowOutput(delim) 
-                + pet.inheritedLooks2.generateRowOutput(delim) + "\n" );
-        */
+        if(pet.inheritedBehavior1 != null)
+        {
+            inherited.write(pet.name + " Gene 1" + delim + pet.inheritedSprite1.generateRowOutput(delim) 
+                    + pet.inheritedBehavior1.generateRowOutput(delim) 
+                    + pet.inheritedLooks1.generateRowOutput(delim) + "\n" 
+                    + pet.name + " Gene 2" + delim + pet.inheritedSprite2.generateRowOutput(delim) 
+                    + pet.inheritedBehavior2.generateRowOutput(delim) 
+                    + pet.inheritedLooks2.generateRowOutput(delim) + "\n" );
+        }
+        
     }
     
     public static void traverseFilesIn(String path, String delim) throws IOException

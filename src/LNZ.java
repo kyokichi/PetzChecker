@@ -41,12 +41,12 @@ public class LNZ
         
         
         /* Set the TEXTURE LIST */
+        textures = new ArrayList<String>();
         String textureSection = getPiece("[Texture List]");
         
         if(textureSection != null)
         {
             Scanner nz = new Scanner(textureSection);
-            textures = new ArrayList<String>();
             
             while(nz.hasNextLine())
             {
